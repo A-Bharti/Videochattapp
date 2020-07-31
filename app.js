@@ -16,6 +16,6 @@ io.on('connection',(socket)=>{
         socket.broadcast.emit('id',id);
     })
 })
-http.listen(3000,()=>{
+http.listen(process.env.PORT,()=>{
     console.log('running')
 })
