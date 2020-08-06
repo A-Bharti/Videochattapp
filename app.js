@@ -9,12 +9,15 @@ app.use(express.static('public'))
 app.get('/',(req,res)=>{
     res.sendFile('./public/index.html')
 })
-
+var info=[{id:"testid",name:"testname"}];
 io.on('connection',(socket)=>{
+
     socket.on('room',(data)=>{
-        console.log(data)
+
         socket.join(data.room);
-        // io.sockets.in(data.room).emit('id',data.id)
+        info.push({id:data.id,name:data.name});
+        socket.emit('info',info);
+
         socket.to(data.room).broadcast.emit('id',{id:data.id,name:data.name});
 
     })
