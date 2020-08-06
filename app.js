@@ -15,10 +15,10 @@ io.on('connection',(socket)=>{
         console.log(data)
         socket.join(data.room);
         // io.sockets.in(data.room).emit('id',data.id)
-        socket.to(data.room).broadcast.emit('id',data.id);
+        socket.to(data.room).broadcast.emit('id',{id:data.id,name:data.name});
 
     })
 })
-http.listen(process.env.PORT,()=>{
+http.listen(process.env.PORT || 3000,()=>{
     console.log('running')
 })
