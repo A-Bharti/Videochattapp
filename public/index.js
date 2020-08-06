@@ -1,54 +1,54 @@
-// const SimplePeer = require("simple-peer");
+var name=prompt('Enter Your Name');
+var room=prompt('Enter room id');
 
 var socket=io();
 var peer=new Peer();
 
-
 peer.on('open',(id)=>{
-    console.log(id);
-    socket.emit('id',id);
-})
-
+    console.log('myid ',id);
+    socket.emit('room',{room:room,id:id});
+    })
 
 socket.on('id',(id)=>{
-   var conn= peer.connect(id);
-
-
    navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
+    
     var call=peer.call(id,stream);
-    console.log('call made')
+    console.log('call made to '+ id)
     call.on('stream',(stream)=>{
-        addVideo(stream);
+        if(document.getElementById(id)===null){
+        console.log('caller called ->')
+        var video=document.createElement('video');
+        video.id=id;
+        addVideo(video,stream);
+        }
     })
 
    })
-   conn.on('open',()=>{
-       console.log(id);
-       conn.send('hiiii working')
-   })
 })
 
-peer.on('connection',(co)=>{
-    co.on('data',(data)=>{
-        console.log(data)
-    })
-})
 
 peer.on('call',(call)=>{
-    console.log("call came")
-    call.on('stream',(stream)=>{
-        addVideo(stream);
+    navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
+        call.answer(stream);
     })
-        navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
-            call.answer(stream);
-            
-        })
+        call.on('stream',(callerstream)=>{
+            if(document.getElementById(call.peer)===null){
+            var video=document.createElement('video');
+            video.id=call.peer;
+            addVideo(video,callerstream);
+            }
+         })
+                
+        
 })
-function addVideo(stream)
-{
-   
-        var video=document.createElement('video');
-        document.body.appendChild(video)
-        video.srcObject=stream;
-        video.play();
+
+
+function addVideo(videoElement,stream)
+{   
+    document.body.appendChild(videoElement)
+    videoElement.srcObject=stream;
+    videoElement.controls="true";
+    videoElement.play()
+    
 }
+

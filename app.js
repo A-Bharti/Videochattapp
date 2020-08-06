@@ -11,9 +11,12 @@ app.get('/',(req,res)=>{
 })
 
 io.on('connection',(socket)=>{
-    socket.on('id',(id)=>{
-        console.log(id)
-        socket.broadcast.emit('id',id);
+    socket.on('room',(data)=>{
+        console.log(data)
+        socket.join(data.room);
+        // io.sockets.in(data.room).emit('id',data.id)
+        socket.to(data.room).broadcast.emit('id',data.id);
+
     })
 })
 http.listen(3000,()=>{
